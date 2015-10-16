@@ -5,6 +5,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+//added for sake of MongoDb
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/nodetest1');
+//end MongoDb add
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -21,6 +27,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Make the MongoDb database accessible to the router
+app.use(function(req,res,next){
+  req.db = db;
+  next();
+});
+
 
 app.use('/', routes);
 app.use('/users', users);
